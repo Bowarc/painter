@@ -91,7 +91,7 @@ impl ScreenPainter {
             }
             self.currently_drawing = true
         } else {
-            // click was not held this frame and the last Line is not new
+            // click was not held this frame
 
             // clean any empty lines
             self.canvas
