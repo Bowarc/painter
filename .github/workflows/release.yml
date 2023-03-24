@@ -13,7 +13,7 @@ on:
 env:
   BIN_NAME: Screen-Painter
   PROJECT_NAME: screen-painter
-  REPO_NAME: Bowarc/Screen-painter
+  REPO_NAME: Bowarc/Screen_painter
 
 jobs:
   dist:
