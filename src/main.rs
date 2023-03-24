@@ -1,5 +1,4 @@
 #![windows_subsystem = "windows"]
-use eframe::egui;
 
 fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
@@ -18,18 +17,18 @@ fn main() -> Result<(), eframe::Error> {
 struct ScreenPainter {
     canvas: Vec<Line>,
     recently_deleted: Vec<Line>,
-    current_stroke: egui::Stroke,
+    current_stroke: eframe::egui::Stroke,
     currently_drawing: bool,
 }
 
 struct Line {
-    stroke: egui::Stroke,
-    points: Vec<egui::Pos2>,
+    stroke: eframe::egui::Stroke,
+    points: Vec<eframe::egui::Pos2>,
 }
 
 impl ScreenPainter {
     fn new(cc: &eframe::CreationContext) -> Self {
-        use egui::{
+        use eframe::egui::{
             FontFamily::{Monospace, Proportional},
             FontId, TextStyle,
         };
@@ -68,9 +67,9 @@ impl ScreenPainter {
         }
     }
 
-    fn render_paint_canvas(&mut self, ui: &mut egui::Ui) -> egui::Response {
+    fn render_paint_canvas(&mut self, ui: &mut eframe::egui::Ui) -> eframe::egui::Response {
         let (mut response, painter) =
-            ui.allocate_painter(ui.available_size_before_wrap(), egui::Sense::drag());
+            ui.allocate_painter(ui.available_size_before_wrap(), eframe::egui::Sense::drag());
 
         if let Some(pos) = response.interact_pointer_pos() {
             if !self.currently_drawing {
@@ -103,15 +102,15 @@ impl ScreenPainter {
         let shapes = self
             .canvas
             .iter()
-            .map(|line| egui::Shape::line(line.points.clone(), line.stroke));
+            .map(|line| eframe::egui::Shape::line(line.points.clone(), line.stroke));
 
         painter.extend(shapes);
         response
     }
     fn render_tooltip(
         &mut self,
-        ctx: &egui::Context,
-        ui: &mut egui::Ui,
+        ctx: &eframe::egui::Context,
+        ui: &mut eframe::egui::Ui,
         frame: &mut eframe::Frame,
     ) {
         if ui
@@ -124,9 +123,9 @@ impl ScreenPainter {
         // Add a button and a CTRL+Z shortcut to remove the last drawn line
         if ui.button("Remove last").clicked()
             || ctx.input_mut(|i| {
-                i.consume_shortcut(&egui::KeyboardShortcut::new(
-                    egui::Modifiers::CTRL,
-                    egui::Key::Z,
+                i.consume_shortcut(&eframe::egui::KeyboardShortcut::new(
+                    eframe::egui::Modifiers::CTRL,
+                    eframe::egui::Key::Z,
                 ))
             })
         {
@@ -136,9 +135,9 @@ impl ScreenPainter {
         // Add a button and a CTRL+Y shortcut to restore the last deleted line
         if ui.button("Restore last").clicked()
             || ctx.input_mut(|i| {
-                i.consume_shortcut(&egui::KeyboardShortcut::new(
-                    egui::Modifiers::CTRL,
-                    egui::Key::Y,
+                i.consume_shortcut(&eframe::egui::KeyboardShortcut::new(
+                    eframe::egui::Modifiers::CTRL,
+                    eframe::egui::Key::Y,
                 ))
             })
         {
@@ -146,15 +145,15 @@ impl ScreenPainter {
         }
 
         // Add some controls to modify the current stroke
-        let egui::Stroke { width, color } = &mut self.current_stroke;
+        let eframe::egui::Stroke { width, color } = &mut self.current_stroke;
         ui.horizontal(|ui| {
             // width control
-            ui.add(egui::Slider::new(width, 0.1..=30.0));
+            ui.add(eframe::egui::Slider::new(width, 0.1..=30.0));
             // color control
-            egui::widgets::color_picker::color_edit_button_srgba(
+            eframe::egui::widgets::color_picker::color_edit_button_srgba(
                 ui,
                 color,
-                egui::widgets::color_picker::Alpha::Opaque,
+                eframe::egui::widgets::color_picker::Alpha::Opaque,
             );
         });
 
@@ -166,22 +165,22 @@ impl ScreenPainter {
 }
 
 impl eframe::App for ScreenPainter {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        egui::CentralPanel::default()
-            .frame(egui::Frame::none().fill(egui::Color32::from_white_alpha(0)))
+    fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
+        eframe::egui::CentralPanel::default()
+            .frame(eframe::egui::Frame::none().fill(eframe::egui::Color32::from_white_alpha(0)))
             .show(ctx, |ui| self.render_paint_canvas(ui));
 
-        egui::Window::new("Control panel")
+        eframe::egui::Window::new("Control panel")
             .resizable(false)
             .show(ctx, |ui| self.render_tooltip(ctx, ui, frame));
     }
-    fn clear_color(&self, _visuals: &egui::style::Visuals) -> [f32; 4] {
+    fn clear_color(&self, _visuals: &eframe::egui::style::Visuals) -> [f32; 4] {
         [0.0, 0.0, 0.0, 0.]
     }
 }
 
 impl Line {
-    fn new(stroke: egui::Stroke) -> Self {
+    fn new(stroke: eframe::egui::Stroke) -> Self {
         Self {
             stroke,
             points: Vec::new(),
@@ -192,9 +191,12 @@ impl Line {
 impl Default for ScreenPainter {
     fn default() -> Self {
         Self {
-            canvas: Vec::new(),
+            canvas: Default::default(),
             recently_deleted: Vec::new(),
-            current_stroke: egui::Stroke::new(3.0, egui::Color32::from_rgb(25, 200, 100)),
+            current_stroke: eframe::egui::Stroke::new(
+                3.0,
+                eframe::egui::Color32::from_rgb(25, 200, 100),
+            ),
             currently_drawing: false,
         }
     }
