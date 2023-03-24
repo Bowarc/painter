@@ -192,7 +192,7 @@ impl Line {
 impl Default for ScreenPainter {
     fn default() -> Self {
         Self {
-            canvas: Default::default(),
+            canvas: Vec::new(),
             recently_deleted: Vec::new(),
             current_stroke: egui::Stroke::new(3.0, egui::Color32::from_rgb(25, 200, 100)),
             currently_drawing: false,
